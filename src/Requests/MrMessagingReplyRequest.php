@@ -4,7 +4,9 @@ namespace Illuminate\Notifications\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Notifications\Messages\MrMessagingMessage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class MrMessagingReplyRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class MrMessagingReplyRequest extends FormRequest
     {
         return [
             'id' => ['required', 'string'],
-            'status' => ['required', 'string'], // DELIVRD, EXPIRED, DELETED, UNDELIV, ACCEPTD, UNKNOWN, REJECTD
+            'status' => ['required', 'string', Rule::in(MrMessagingMessage::RESPONSE_STATUSES)], // DELIVRD, EXPIRED, DELETED, UNDELIV, ACCEPTD, UNKNOWN, REJECTD
             'submitdate' => ['required', 'date'], // The time and date at which the short message was submitted, formatted as “YYYY-MM-DD HH:MM:SS”, e.g. “2010-01-01 14:18:00”
             'donedate' => ['required', 'date'], // The time and date at which the short message reached its final state, formatted as “YYYY-MM-DD HH:MM:SS”, e.g. “2010-01-01 14:18:00”
             'submitted' => ['required', 'string'], // Number of short messages originally submitted
