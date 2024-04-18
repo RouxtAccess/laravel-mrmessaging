@@ -51,7 +51,7 @@ class MrMessagingChannel
          * The sender string cannot be more than 11 alphanumeric characters
          * So here we will fill the remaining characters with random characters and a pipe to get some uniqueness for the notifiable
          */
-        $senderString = substr(Str::random(11-1-strlen($notifiable->getKey())) . '|' . $notifiable->getKey(), 11);
+        $senderString = substr(Str::random(11-1-strlen($notifiable->getKey())) . '|' . $notifiable->getKey(), 0, 11);
 
 
         $data = [
