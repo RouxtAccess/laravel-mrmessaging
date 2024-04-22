@@ -26,8 +26,9 @@ class MrMessagingChannel
             Log::error('Notification does not have a toMrMessaging method', ['notification' => $notification]);
             return null;
         }
-        if (config('mrmessaging.delivery_enabled') != true) {
-            return null;
+        $message = $notification->toMrMessaging($notifiable);
+        if (is_string($message)) {
+            $message = resolve(MrMessagingMessage::class, ['message' => $message]);
         }
 
         // We will look for toMrmessaging method first, then fallback to toSms
@@ -36,16 +37,8 @@ class MrMessagingChannel
                 return null;
             }
         }
-
         // Remove any spaces or + from the number
         $to = str_replace(['+', ' '], '', $to);
-
-        $message = $notification->toMrMessaging($notifiable);
-
-        if (is_string($message)) {
-            $message = resolve(MrMessagingMessage::class, ['message' => $message]);
-        }
-
 
         /*
          * The sender string cannot be more than 11 alphanumeric characters
@@ -64,6 +57,10 @@ class MrMessagingChannel
         if (strlen($message->getContent()) > 160) {
             $data['type'] = 'longsms';
         }
+
+        if (config('mrmessaging.delivery_enabled') != true) {
+            return null;
+        }
         $response = Http::get(config('mrmessaging.host') . 'sendsms', $data);
 
         if (!$response->successful()) {
@@ -81,17 +78,7 @@ class MrMessagingChannel
         $mrMessageEventIds = explode(',', $response->body());
 
 
-        // Store the eventId in the notification or cache
-
-        if (config('mrmessaging.store_event_id.saved_notification.enabled')) {
-            if ($notification->savedNotification && $notification->savedNotification instanceof DatabaseNotification) {
-                $primaryEventId = $mrMessageEventIds[0];
-                $notification->savedNotification->update([
-                    'event_id' => $primaryEventId,
-                    'sent_at' => Carbon::now(),
-                ]);
-            }
-        }
+        // Store the eventId in cache
         if (config('mrmessaging.store_event_id.cache.enabled')) {
             foreach ($mrMessageEventIds as $mrMessageEventId) {
                 Cache::tags('mr_messaging')->put($mrMessageEventId, [

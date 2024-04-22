@@ -31,7 +31,7 @@ class MrMessagingDeliveryReportRequest extends FormRequest
 
     protected function failedValidation(Validator $validator): void
     {
-        Log::warning(class_basename($this) . ' - Validation failed', ['request' => $this->request->all(), 'errors' => $this->errorBag]);
+        Log::warning(class_basename($this) . ' - Validation failed', ['request' => request()?->all(), 'errors' => $validator->errors()]);
         parent::failedValidation($validator);
     }
 }

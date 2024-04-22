@@ -94,7 +94,7 @@ php artisan vendor:publish --tag=laravel-mrmessaging-config
 You will notice that there are a few additional configuration options in the config file around storing eventIDs
 
 ## Event Tracking
-Mr Messaging supports event tracking through a number of different mechanisms.
+Mr Messaging supports event tracking through a two different mechanisms.
 
 ### Option 1: Laravel Notification Events 
 By default, you can always hook into [Laravel's events](https://laravel.com/docs/11.x/notifications#notification-sent-event) to listen for the `NotificationSentEvent` event
@@ -107,14 +107,6 @@ It is an array, not a string because of multi-part messages (MrMessaging gives u
 If enable via the config, we will store the eventIDs from all sms messages sent in the cache for a configurable amount of time (defaulting to 24 hours)
 
 This is very useful if you just want a very simple solution to track the eventID until you get a delivery report back from Mr Messaging
-
-### Option 3: Custom SavedNotifications
-If you're storing your notifications to the db as well, and you have a `savedNotification` property on your notification, you can enable this feature.
-
-We will update your `savedNotification` model and set some fields.
-
->Note: This isn't a good option and is here for legacy support for some systems. I don't recommend using this option and even now it's only a partial solution as it doesn't correctly handle multi-part messages
-
 
 # License
 
