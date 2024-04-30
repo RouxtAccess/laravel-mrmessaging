@@ -5,8 +5,6 @@ namespace Illuminate\Notifications\Messages;
 
 class MrMessagingMessage
 {
-    public const LINE_BREAK = '|';
-
     public const RESPONSE_STATUS_DELIVERED = 'DELIVRD';
     public const RESPONSE_STATUS_EXPIRED = 'EXPIRED';
     public const RESPONSE_STATUS_DELETED = 'DELETED';
@@ -39,7 +37,7 @@ class MrMessagingMessage
      */
     public function content(string $content) : self
     {
-        $this->content = trim(str_replace('<br>', self::LINE_BREAK, nl2br($content, false)));
+        $this->content = trim($content);
 
         return $this;
     }
